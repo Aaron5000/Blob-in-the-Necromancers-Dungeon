@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blob in the Necromancer's Dungeon</title>
+    <link rel="stylesheet" href="styles.css">
+    <audio id="backgroundMusic" autoplay loop preload="auto">
+        <source src="NecromancerDungeon.mp3" type="audio/mpeg">
+        Your browser does not support the audio element.
+    </audio>
+</head>
+<body>
+    <div class="game-container">
+        <div class="header">
+            <img src="logo.jpg" alt="Blob in the Necromancer's Dungeon" class="game-logo">
+            <div class="stats">
+                <div class="stat">
+                    <span class="label">HP:</span>
+                    <span id="health">100</span>/<span id="max-health">100</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Level:</span>
+                    <span id="level">1</span>
+                </div>
+                <div class="stat">
+                    <span class="label">Dungeon:</span>
+                    <span id="dungeon-level">1</span>
+                </div>
+                <div class="stat">
+                    <span class="label">XP:</span>
+                    <span id="xp">0</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="game-area">
+            <div class="main-game">
+                <canvas id="gameCanvas" width="800" height="600"></canvas>
+                
+                <div class="inventory-section">
+                    <h3>Inventory</h3>
+                    <div id="inventory" class="inventory-large"></div>
+                </div>
+            </div>
+            
+            <div class="sidebar">
+                <div class="panel">
+                    <h3>Messages</h3>
+                    <div id="messages" class="messages"></div>
+                </div>
+                
+                <div class="panel">
+                    <h3>Stats</h3>
+                    <div id="stats-panel" class="stats-panel">
+                        <div class="stat-row">
+                            <span class="stat-label">Attack:</span>
+                            <span id="stat-attack">15</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Defense:</span>
+                            <span id="stat-defense">5</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Total Damage:</span>
+                            <span id="stat-damage">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Enemies Killed:</span>
+                            <span id="stat-kills">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Items Found:</span>
+                            <span id="stat-items">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Levels Completed:</span>
+                            <span id="stat-levels">0</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Slime Trail:</span>
+                            <span id="stat-slime-trail">Inactive</span>
+                        </div>
+                        <div class="stat-row">
+                            <span class="stat-label">Lightning Power:</span>
+                            <span id="stat-lightning">Inactive</span>
+                        </div>
+                    </div>
+                    
+                    <div id="item-detail" class="item-detail">
+                        <div class="item-detail-header">
+                            <span class="item-detail-name" id="item-detail-name">Item Name</span>
+                            <span class="item-detail-close" id="item-detail-close">&times;</span>
+                        </div>
+                        <div class="item-detail-content" id="item-detail-content">
+                            <!-- Item details will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="footer">
+            <div class="button-group">
+                <button id="restartBtn">New Game</button>
+                <button id="controlsBtn">Controls</button>
+                <button id="musicToggle">Music: ON</button>
+            </div>
+            <span class="status" id="status">Ready to play!</span>
+        </div>
+    </div>
+    
+    <!-- Controls Modal -->
+    <div id="controlsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Game Controls</h2>
+                <span class="close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="control-section">
+                    <h3>Movement</h3>
+                    <p><strong>WASD</strong> or <strong>Arrow Keys</strong>: Move your character</p>
+                    <p><strong>Space</strong>: Wait/Take a turn</p>
+                </div>
+                
+                <div class="control-section">
+                    <h3>Game Actions</h3>
+                    <p><strong>R</strong>: Restart the game</p>
+                    <p><strong>Walk into doors</strong>: Advance to next level</p>
+                </div>
+                
+                <div class="control-section">
+                    <h3>Gameplay Tips</h3>
+                    <p>• Items auto-apply when picked up</p>
+                    <p>• Ranged weapons auto-fire at enemies</p>
+                    <p>• Defeat enemies to gain XP and level up</p>
+                    <p>• Find better equipment to become stronger</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="game.js"></script>
+</body>
+</html> 

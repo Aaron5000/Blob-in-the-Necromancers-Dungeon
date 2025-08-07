@@ -51,8 +51,6 @@ class RoguelikeGame {
         this.setupEventListeners();
         this.setupAudio();
         this.showHomeScreen();
-        this.addMessage("Welcome to the dungeon! Use WASD or arrow keys to move.", "info");
-        this.addMessage("You are a blob on a path of vengeance to destroy the necromancer that created you. All treasures hoarded in the necromancer's dungeon can be absorbed with their magic properties enhancing your blob. Maybe if the necromancer is defeated enough times you can take the throne and remove his blight from the land.", "info");
     }
     
     showHomeScreen() {
@@ -75,10 +73,17 @@ class RoguelikeGame {
             
             // Draw the home image
             this.ctx.drawImage(homeImage, x, y, scaledWidth, scaledHeight);
-            
-            // Add start game text
-                           // No text overlay - just the image
         };
+        
+        homeImage.onerror = () => {
+            console.log('Failed to load home.jpg, starting game directly');
+            this.showingHomeScreen = false;
+            this.generateMap();
+            this.addMessage("Welcome to the dungeon! Use WASD or arrow keys to move.", "info");
+            this.addMessage("You are a blob on a path of vengeance to destroy the necromancer that created you. All treasures hoarded in the necromancer's dungeon can be absorbed with their magic properties enhancing your blob. Maybe if the necromancer is defeated enough times you can take the throne and remove his blight from the land.", "info");
+            this.render();
+        };
+        
         homeImage.src = 'home.jpg';
         
         // Add event listener for starting the game
@@ -86,10 +91,25 @@ class RoguelikeGame {
             console.log('Starting game...');
             this.showingHomeScreen = false;
             this.generateMap();
+            this.addMessage("Welcome to the dungeon! Use WASD or arrow keys to move.", "info");
+            this.addMessage("You are a blob on a path of vengeance to destroy the necromancer that created you. All treasures hoarded in the necromancer's dungeon can be absorbed with their magic properties enhancing your blob. Maybe if the necromancer is defeated enough times you can take the throne and remove his blight from the land.", "info");
             this.render();
             document.removeEventListener('keydown', startGame);
         };
         document.addEventListener('keydown', startGame);
+        
+        // Fallback: start game automatically after 3 seconds if home screen doesn't load
+        setTimeout(() => {
+            if (this.showingHomeScreen) {
+                console.log('Home screen timeout, starting game automatically');
+                this.showingHomeScreen = false;
+                this.generateMap();
+                this.addMessage("Welcome to the dungeon! Use WASD or arrow keys to move.", "info");
+                this.addMessage("You are a blob on a path of vengeance to destroy the necromancer that created you. All treasures hoarded in the necromancer's dungeon can be absorbed with their magic properties enhancing your blob. Maybe if the necromancer is defeated enough times you can take the throne and remove his blight from the land.", "info");
+                this.render();
+                document.removeEventListener('keydown', startGame);
+            }
+        }, 3000);
     }
     
     setupEventListeners() {
@@ -347,10 +367,10 @@ class RoguelikeGame {
             y: Math.floor(bossRoom.y + bossRoom.height / 2),
             type: 'necromancer',
             level: 10,
-            health: 2000,
-            maxHealth: 2000,
-            attack: 80,
-            defense: 40,
+            health: 5000,
+            maxHealth: 5000,
+            attack: 150,
+            defense: 80,
             xpValue: 1000,
             aggression: 0.9,
             direction: 'down',
@@ -363,6 +383,7 @@ class RoguelikeGame {
             summonCooldown: 0,
             tauntCooldown: 0
         };
+        console.log("Creating boss with isBoss:", boss.isBoss);
         this.enemies.push(boss);
         
         // Fill room with health potions
@@ -454,7 +475,7 @@ class RoguelikeGame {
         
         // Calculate level scaling - monsters get much stronger each level
         // Early levels have reduced scaling
-        const earlyLevelScaling = this.currentLevel <= 5 ? Math.pow(1.2, this.currentLevel - 1) : Math.pow(1.5, this.currentLevel - 1);
+        const earlyLevelScaling = this.currentLevel <= 5 ? Math.pow(1.4, this.currentLevel - 1) : Math.pow(1.8, this.currentLevel - 1);
         const enemyLevel = Math.floor(Math.random() * 3) + 1; // Random level 1-3
         const levelMultiplier = Math.pow(1.3, enemyLevel - 1);
         
@@ -479,47 +500,47 @@ class RoguelikeGame {
         
         switch(type) {
             case 'goblin':
-                enemy.health = enemy.maxHealth = Math.floor((30 + (this.currentLevel * 15)) * earlyLevelScaling * levelMultiplier);
-                enemy.attack = Math.floor((8 + (this.currentLevel * 4)) * earlyLevelScaling * levelMultiplier);
-                enemy.defense = Math.floor((2 + this.currentLevel * 2) * earlyLevelScaling * levelMultiplier);
-                enemy.xpValue = Math.floor((10 + (this.currentLevel * 10)) * earlyLevelScaling * levelMultiplier);
-                enemy.aggression = 0.4;
-                break;
-            case 'orc':
-                enemy.health = enemy.maxHealth = Math.floor((50 + (this.currentLevel * 20)) * earlyLevelScaling * levelMultiplier);
+                enemy.health = enemy.maxHealth = Math.floor((50 + (this.currentLevel * 25)) * earlyLevelScaling * levelMultiplier);
                 enemy.attack = Math.floor((12 + (this.currentLevel * 6)) * earlyLevelScaling * levelMultiplier);
                 enemy.defense = Math.floor((4 + this.currentLevel * 3) * earlyLevelScaling * levelMultiplier);
-                enemy.xpValue = Math.floor((20 + (this.currentLevel * 15)) * earlyLevelScaling * levelMultiplier);
+                enemy.xpValue = Math.floor((15 + (this.currentLevel * 15)) * earlyLevelScaling * levelMultiplier);
                 enemy.aggression = 0.5;
                 break;
-            case 'troll':
-                enemy.health = enemy.maxHealth = Math.floor((80 + (this.currentLevel * 25)) * earlyLevelScaling * levelMultiplier);
+            case 'orc':
+                enemy.health = enemy.maxHealth = Math.floor((80 + (this.currentLevel * 30)) * earlyLevelScaling * levelMultiplier);
                 enemy.attack = Math.floor((18 + (this.currentLevel * 8)) * earlyLevelScaling * levelMultiplier);
-                enemy.defense = Math.floor((8 + this.currentLevel * 4) * earlyLevelScaling * levelMultiplier);
-                enemy.xpValue = Math.floor((35 + (this.currentLevel * 20)) * earlyLevelScaling * levelMultiplier);
+                enemy.defense = Math.floor((6 + this.currentLevel * 4) * earlyLevelScaling * levelMultiplier);
+                enemy.xpValue = Math.floor((30 + (this.currentLevel * 20)) * earlyLevelScaling * levelMultiplier);
                 enemy.aggression = 0.6;
                 break;
-            case 'dragon':
-                enemy.health = enemy.maxHealth = Math.floor((150 + (this.currentLevel * 40)) * earlyLevelScaling * levelMultiplier);
+            case 'troll':
+                enemy.health = enemy.maxHealth = Math.floor((120 + (this.currentLevel * 35)) * earlyLevelScaling * levelMultiplier);
                 enemy.attack = Math.floor((25 + (this.currentLevel * 10)) * earlyLevelScaling * levelMultiplier);
-                enemy.defense = Math.floor((15 + this.currentLevel * 5) * earlyLevelScaling * levelMultiplier);
-                enemy.xpValue = Math.floor((100 + (this.currentLevel * 30)) * earlyLevelScaling * levelMultiplier);
+                enemy.defense = Math.floor((12 + this.currentLevel * 5) * earlyLevelScaling * levelMultiplier);
+                enemy.xpValue = Math.floor((50 + (this.currentLevel * 25)) * earlyLevelScaling * levelMultiplier);
                 enemy.aggression = 0.7;
+                break;
+            case 'dragon':
+                enemy.health = enemy.maxHealth = Math.floor((200 + (this.currentLevel * 50)) * earlyLevelScaling * levelMultiplier);
+                enemy.attack = Math.floor((35 + (this.currentLevel * 12)) * earlyLevelScaling * levelMultiplier);
+                enemy.defense = Math.floor((20 + this.currentLevel * 6) * earlyLevelScaling * levelMultiplier);
+                enemy.xpValue = Math.floor((150 + (this.currentLevel * 40)) * earlyLevelScaling * levelMultiplier);
+                enemy.aggression = 0.8;
                 enemy.size = 2; // Large dragon
                 break;
             case 'skeleton':
-                enemy.health = enemy.maxHealth = Math.floor((40 + (this.currentLevel * 12)) * earlyLevelScaling * levelMultiplier);
-                enemy.attack = Math.floor((10 + (this.currentLevel * 4)) * earlyLevelScaling * levelMultiplier);
-                enemy.defense = Math.floor((3 + this.currentLevel * 2) * earlyLevelScaling * levelMultiplier);
-                enemy.xpValue = Math.floor((15 + (this.currentLevel * 12)) * earlyLevelScaling * levelMultiplier);
-                enemy.aggression = 0.5;
-                break;
-            case 'zombie':
-                enemy.health = enemy.maxHealth = Math.floor((60 + (this.currentLevel * 18)) * earlyLevelScaling * levelMultiplier);
-                enemy.attack = Math.floor((14 + (this.currentLevel * 5)) * earlyLevelScaling * levelMultiplier);
+                enemy.health = enemy.maxHealth = Math.floor((70 + (this.currentLevel * 20)) * earlyLevelScaling * levelMultiplier);
+                enemy.attack = Math.floor((15 + (this.currentLevel * 6)) * earlyLevelScaling * levelMultiplier);
                 enemy.defense = Math.floor((5 + this.currentLevel * 3) * earlyLevelScaling * levelMultiplier);
                 enemy.xpValue = Math.floor((25 + (this.currentLevel * 15)) * earlyLevelScaling * levelMultiplier);
                 enemy.aggression = 0.6;
+                break;
+            case 'zombie':
+                enemy.health = enemy.maxHealth = Math.floor((90 + (this.currentLevel * 25)) * earlyLevelScaling * levelMultiplier);
+                enemy.attack = Math.floor((20 + (this.currentLevel * 7)) * earlyLevelScaling * levelMultiplier);
+                enemy.defense = Math.floor((8 + this.currentLevel * 4) * earlyLevelScaling * levelMultiplier);
+                enemy.xpValue = Math.floor((40 + (this.currentLevel * 20)) * earlyLevelScaling * levelMultiplier);
+                enemy.aggression = 0.7;
                 break;
             case 'ghost':
                 enemy.health = enemy.maxHealth = Math.floor((45 + (this.currentLevel * 12)) * earlyLevelScaling * levelMultiplier);
@@ -901,9 +922,11 @@ class RoguelikeGame {
             this.stats.enemiesKilled++;
             
             // Special victory for boss
+            console.log("Enemy defeated:", enemy.type, "isBoss:", enemy.isBoss);
             if (enemy.isBoss) {
                 this.stats.necromancerKills++;
                 this.addMessage(`You have defeated the Necromancer! Victory #${this.stats.necromancerKills}!`, "success");
+                console.log("Boss defeated, calling showVictoryScreen");
                 this.showVictoryScreen();
             } else {
                 this.addMessage(`You defeated the ${enemy.type} level ${enemy.level}! Gained ${enemy.xpValue} XP.`, "success");
@@ -914,8 +937,9 @@ class RoguelikeGame {
             // Enemy attacks with miss chance
             const enemyDamage = Math.max(1, enemy.attack - player.defense);
             
-            // Check for miss chance
-            if (player.missChance && Math.random() < player.missChance) {
+            // Check for miss chance (capped at 60%)
+            const cappedMissChance = Math.min(player.missChance || 0, 0.6);
+            if (cappedMissChance > 0 && Math.random() < cappedMissChance) {
                 this.addMessage(`The ${enemy.type} level ${enemy.level} missed you!`, "success");
             } else {
                 player.health -= enemyDamage;
@@ -945,7 +969,7 @@ class RoguelikeGame {
         const xpNeeded = this.player.level * 50;
         if (this.player.xp >= xpNeeded) {
             this.player.level++;
-            this.player.maxHealth += 20;
+            this.player.maxHealth += 1000;
             this.player.health = this.player.maxHealth;
             this.player.attack += 3;
             this.player.defense += 2;
@@ -1014,13 +1038,13 @@ class RoguelikeGame {
                     x: x,
                     y: y,
                     type: 'skeleton',
-                    level: 3,
-                    health: 100,
-                    maxHealth: 100,
-                    attack: 25,
-                    defense: 10,
-                    xpValue: 50,
-                    aggression: 0.7,
+                    level: 8,
+                    health: 300,
+                    maxHealth: 300,
+                    attack: 60,
+                    defense: 25,
+                    xpValue: 150,
+                    aggression: 0.8,
                     direction: 'down',
                     size: 1,
                     canShoot: false,
@@ -2080,6 +2104,7 @@ class RoguelikeGame {
         
         // Show victory screen if victory
         if (this.victory) {
+            console.log("Victory state detected in render, showing victory screen");
             this.showVictoryScreen();
             return;
         }
@@ -2407,6 +2432,7 @@ class RoguelikeGame {
     }
     
     showVictoryScreen() {
+        console.log("showVictoryScreen called");
         this.victory = true;
         
         // Clear canvas
